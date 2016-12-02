@@ -7,9 +7,16 @@
     "url": "git@github.com:Gelio/pswrd-br8kr.git",
     "type": "git"
   },
+  "scripts": {
+    "test": "jasmine"
+  },
   "author": "Grzegorz Rozdzialik <voreny.gelio@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "lodash": "^4.17.2",
     "request": "^2.79.0"
+  },
+  "devDependencies": {
+    "jasmine": "^2.5.2"
   }
 }
