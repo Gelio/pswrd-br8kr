@@ -7,8 +7,8 @@ describe('Authenticator', () => {
   let logger;
 
   beforeEach(() => {
-    pm = new PasswordManager();
-    logger = new LoggerModule.Logger(LoggerModule.LOGGING_LEVEL.SILENT);
+    pm = jasmine.createSpyObj('pm', ['push', 'pop']);
+    logger = jasmine.createSpyObj('logger', ['verbose', 'error', 'warn', 'log']);
   });
 
   describe('initialization', () => {
