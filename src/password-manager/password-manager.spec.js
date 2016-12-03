@@ -1,4 +1,4 @@
-const PasswordManager = require('./PasswordManager');
+const PasswordManager = require('./password-manager');
 const createMockPasswordFile = require('./createMockPasswordFile');
 
 describe('PasswordManager', () => {
