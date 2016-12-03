@@ -104,10 +104,12 @@ class PasswordManager {
   _readlineInterfaceSubscribe(readline) {
     readline.on('line', this._onNewPassword.bind(this));
     readline.on('resume', this._onReadlineResume.bind(this));
+    readline.on('close', this._readlineInterfaceUnsubscribe.bind(this));
   }
 
   _readlineInterfaceUnsubscribe(readline) {
     // TODO: check if event listeners are unsubscribed
+    this.logger.log('File ended. No more lines to read.');
     readline.removeEventListener('line', this._onNewPassword);
     readline.removeEventListener('resume', this._onReadlineResume);
   }
