@@ -1,6 +1,4 @@
 const Authenticator = require('./Authenticator');
-const PasswordManager = require('./PasswordManager');
-const LoggerModule = require('./LoggerModule');
 
 describe('Authenticator', () => {
   let pm;
