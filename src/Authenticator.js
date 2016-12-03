@@ -2,27 +2,25 @@ const request = require('request-promise');
 
 class Authenticator {
   constructor(passwordManager, logger, options) {
-    if (!passwordManager)
+    if (!passwordManager) {
       throw new Error('Missing password manager');
-    this.passwordManager = passwordManager;
-
-    if (!logger)
+    } else if (!logger) {
       throw new Error('Missing logger');
-    this.logger = logger;
-
-    if (!options)
+    } else if (!options) {
       throw new Error('Missing options');
-
-    if (!options.user)
+    } else if (!options.user) {
       throw new Error('Missing auth user');
-    this.user = options.user;
-
-    if (!options.url)
+    } else if (!options.url) {
       throw new Error('Missing url');
-    this.url = options.url;
+    }
 
+    this.passwordManager = passwordManager;
+    this.logger = logger;
+    this.user = options.user;
+    this.url = options.url;
     this.maxRequests = options.maxRequests || 100;
-    this.logger.log('Authenticator set up');
+
+    this.logger.verbose('Authenticator set up');
   }
 
   getAuthorizationHash(password) {
@@ -46,6 +44,8 @@ class Authenticator {
         console.log(response);
       });
   }
+
+
 }
 
 module.exports = Authenticator;
