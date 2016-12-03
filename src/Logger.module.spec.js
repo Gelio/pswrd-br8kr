@@ -1,4 +1,4 @@
-const LoggerModule = require('./LoggerModule');
+const LoggerModule = require('./Logger.module');
 const Logger = LoggerModule.Logger;
 
 describe('Logger', () => {
