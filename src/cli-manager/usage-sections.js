@@ -1,22 +1,12 @@
-const USAGE_SECTIONS = [
-  {
-    header: 'A typical app',
-    content: 'Generates something [italic]{very} important.'
-  },
-  {
-    header: 'Options',
-    optionList: [
-      {
-        name: 'input',
-        typeLabel: '[underline]{file}',
-        description: 'The input to process.'
-      },
-      {
-        name: 'help',
-        description: 'Print this usage guide.'
-      }
-    ]
-  }
-];
-
-module.exports = USAGE_SECTIONS;
+module.exports = function generateUsageSections(optionDefinitions) {
+  return [
+    {
+      header: 'pswrd-br8kr',
+      content: 'Apache authentication password breaker.'
+    },
+    {
+      header: 'Options',
+      optionList: optionDefinitions
+    }
+  ];
+}

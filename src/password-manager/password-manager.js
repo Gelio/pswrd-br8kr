@@ -19,6 +19,8 @@ class PasswordManager {
     this._bufferSize = options.bufferSize || 100;
     /** @type {string[]} */
     this._passwordList = [];
+    /** @type {string} */
+    this._passwordPrefix = options.passwordPrefix;
 
 
     this._init(options.passwordFile);
@@ -116,7 +118,7 @@ class PasswordManager {
 
   _onNewPassword(line) {
     this.linesRead++;
-    this._passwordList.push(line);
+    this._passwordList.push(this._passwordPrefix + line);
 
     this.logger.verbose(`Read password #${this.linesRead}: ${line}`);
 
