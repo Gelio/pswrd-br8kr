@@ -1,37 +1,29 @@
-const request = require('request');
+const Authenticator = require('./src/authenticator');
+const Logger = require('./src/logger').Logger;
+const PasswordManager = require('./src/password-manager');
+const {CLIManager, OPTION_DEFINITIONS, USAGE_SECTIONS} = require('./src/cli-manager');
 
-const config = {
-  url: 'http://mini.pw.edu.pl/~brodka/PZ/zad_A/zadanie_a.zip',
-  user: 's3-pz',
-  passwordPrefix: '',
-  maxRequests: 100,
-  requestCount: 0
-};
-const alphabet = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let cliManager = new CLIManager();
+let options = cliManager.parse(OPTION_DEFINITIONS);
 
-
-switch (process.argv.length) {
-  case 2:
-    break;
-  
-  case 3:
-    config.passwordPrefix = process.argv[2];
-    break;
-  
-  default:
-    console.info('Usage:', process.argv0, 'password-prefix');
-    console.info('Password prefix is optional');
-    process.exit(1);
+if (options.help || process.argv.length == 2) {
+  let help = cliManager.getHelp(USAGE_SECTIONS);
+  console.log(help);
+  process.exit(1);
 }
 
-request.get(config.url)
-  .auth(config.user, config.passwordPrefix, true)
-  .on('response', response => {
-    if (response.statusCode === 200) {
-      console.log('Found match!');
-      process.exit(0);
-    }
-    else {
-      console.log('Wrong password');
-    }
-  });
+
+let logger = new Logger(options.log);
+let pm = new PasswordManager(logger, {
+  passwordFile: options['pass-file'],
+  bufferSize: options['max-requests']
+});
+pm.prepareBuffer();
+
+let authenticator = new Authenticator(pm, logger, {
+  url: options.url,
+  user: options.user,
+  maxRequests: options['max-requests']
+});
+// 4YIbe15P
+authenticator.makeSingleRequest('4YIbe1');
