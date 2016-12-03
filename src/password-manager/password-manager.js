@@ -22,6 +22,8 @@ class PasswordManager {
     /** @type {string} */
     this._passwordPrefix = options.passwordPrefix;
 
+    this._logger = logger;
+
 
     this._init(options.passwordFile);
   }
@@ -61,7 +63,7 @@ class PasswordManager {
     const firstElement = this._passwordList[0];
     this._passwordList.splice(0, 1);
 
-    if (this._passwordReadline.isPaused()) {
+    if (this._passwordReadline.paused) {
       this._passwordReadline.resume();
     }
     return firstElement;
@@ -111,27 +113,30 @@ class PasswordManager {
 
   _readlineInterfaceUnsubscribe(readline) {
     // TODO: check if event listeners are unsubscribed
-    this.logger.log('File ended. No more lines to read.');
+    this._logger.log('File ended. No more lines to read.');
     readline.removeEventListener('line', this._onNewPassword);
     readline.removeEventListener('resume', this._onReadlineResume);
   }
 
   _onNewPassword(line) {
+    if (this._passwordReadline.paused) {
+      return;
+    }
     this.linesRead++;
     this._passwordList.push(this._passwordPrefix + line);
 
-    this.logger.verbose(`Read password #${this.linesRead}: ${line}`);
+    this._logger.verbose(`Read password #${this.linesRead}: ${line}`);
 
-    if (this._passwordList.length >= this._bufferSize) {
+    if (this._passwordList.length >= this._bufferSize && !this._passwordReadline.paused) {
       this._passwordReadline.pause();
 
-      this.logger.verbose(`Buffer full. Bulk read ${this.linesRead} passwords`);
+      this._logger.verbose(`Buffer full. Bulk read ${this.linesRead} passwords`);
     }
   }
 
   _onReadlineResume() {
     this.linesRead = 0;
-    this.logger.verbose(`Pasword readline resumed (${this._passwordList.length} passwords buffered)`);
+    this._logger.verbose(`Pasword readline resumed (${this._passwordList.length} passwords buffered)`);
   }
 }
 
