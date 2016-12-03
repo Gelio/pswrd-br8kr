@@ -1,28 +1,28 @@
 const LOG_LEVELS = require('./log-levels');
 
 module.exports = class Logger {
-  constructor(loggingLevel, logDestination = console) {
-    this.loggingLevel = loggingLevel || LOG_LEVELS.REGULAR;
-    this.logDestination = logDestination;
+  constructor(loggingLevel = LOG_LEVELS.REGULAR, logDestination = console) {
+    this._loggingLevel = loggingLevel;
+    this._logDestination = logDestination;
   }
 
   log(...params) {
-    if (this.loggingLevel >= LOG_LEVELS.REGULAR)
-      this.logDestination.log(...params);
+    if (this._loggingLevel >= LOG_LEVELS.REGULAR)
+      this._logDestination.log(...params);
   }
 
   error(...params) {
-    if (this.loggingLevel >= LOG_LEVELS.ERROR)
-      this.logDestination.error(...params);
+    if (this._loggingLevel >= LOG_LEVELS.ERROR)
+      this._logDestination.error(...params);
   }
 
   warn(...params) {
-    if (this.loggingLevel >= LOG_LEVELS.WARN)
-      this.logDestination.warn(...params);
+    if (this._loggingLevel >= LOG_LEVELS.WARN)
+      this._logDestination.warn(...params);
   }
 
   verbose(...params) {
-    if (this.loggingLevel >= LOG_LEVELS.VERBOSE)
-      this.logDestination.info(...params);
+    if (this._loggingLevel >= LOG_LEVELS.VERBOSE)
+      this._logDestination.info(...params);
   }
 }
