@@ -2,36 +2,37 @@ const Logger = require('./logger');
 const LOG_LEVELS = require('./log-levels');
 
 describe('Logger', () => {
-  it('should instantiate without errors', () => {
-    let logger = new Logger();
-    expect(logger).toBeDefined();
+  let logDestination;
+
+  beforeEach(() => {
+    logDestination = jasmine.createSpyObj('logDestination', ['log', 'info', 'warn', 'error']);
   });
 
-  it('should instantiate with default logging level', () => {
-    let logger = new Logger();
-    expect(logger.loggingLevel).toBeDefined();
+  describe('init', () => {
+    it('should instantiate without errors', () => {
+      let logger = new Logger();
+      expect(logger).toBeDefined();
+    });
+
+    it('should instantiate with default logging level', () => {
+      let logger = new Logger();
+      expect(logger._loggingLevel).toBeDefined();
+    });
   });
 
-  it('should respect logging levels hierarchy', () => {
-    spyOn(console, 'error');
+  describe('general', () => {
+    it('should respect logging levels hierarchy', () => {
+      let logger = new Logger(LOG_LEVELS.SILENT, logDestination);
+      logger.error('message');
 
-    let logger = new Logger(LOG_LEVELS.SILENT);
-    logger.error('message');
+      expect(logDestination.error).not.toHaveBeenCalled();
+    });
 
-    expect(console.error).not.toHaveBeenCalled();
-  });
+    it('should log to the logging destination', () => {
+      let logger = new Logger(LOG_LEVELS.REGULAR, logDestination);
+      logger.log('message');
 
-  it('should log to the logging destination', () => {
-    let logDestination = {
-      log() {
-        // Mock logger
-      }
-    };
-    spyOn(logDestination, 'log');
-
-    let logger = new Logger(LOG_LEVELS.REGULAR, logDestination);
-    logger.log('message');
-
-    expect(logDestination.log).toHaveBeenCalledWith('message');
+      expect(logDestination.log).toHaveBeenCalledWith('message');
+    });
   });
 });
