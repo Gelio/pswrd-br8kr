@@ -63,7 +63,7 @@ class PasswordManager {
     const firstElement = this._passwordList[0];
     this._passwordList.splice(0, 1);
 
-    if (this._passwordReadline.paused) {
+    if (this._passwordList.length < this._bufferSize && this._passwordReadline.paused) {
       this._passwordReadline.resume();
     }
     return firstElement;
@@ -108,14 +108,15 @@ class PasswordManager {
   _readlineInterfaceSubscribe(readline) {
     readline.on('line', this._onNewPassword.bind(this));
     readline.on('resume', this._onReadlineResume.bind(this));
-    readline.on('close', this._readlineInterfaceUnsubscribe.bind(this));
+    readline.on('close', this._readlineInterfaceUnsubscribe.bind(this, readline));
   }
 
   _readlineInterfaceUnsubscribe(readline) {
     // TODO: check if event listeners are unsubscribed
     this._logger.log('File ended. No more lines to read.');
-    readline.removeEventListener('line', this._onNewPassword);
-    readline.removeEventListener('resume', this._onReadlineResume);
+    // console.log(readline);
+    // readline.removeEventListener('line', this._onNewPassword);
+    // readline.removeEventListener('resume', this._onReadlineResume);
   }
 
   _onNewPassword(line) {
@@ -133,7 +134,7 @@ class PasswordManager {
 
   _onReadlineResume() {
     this.linesRead = 0;
-    this._logger.verbose(`Pasword readline resumed (${this._passwordList.length} passwords buffered)`);
+    this._logger.verbose(`Password readline resumed (${this._passwordList.length} passwords buffered)`);
   }
 }
 

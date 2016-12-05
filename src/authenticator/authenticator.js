@@ -16,9 +16,10 @@ class Authenticator {
 
     this._passwordManager = passwordManager;
     this._logger = logger;
-    this._user = options._user;
-    this._url = options._url;
+    this._user = options.user;
+    this._url = options.url;
     this._maxRequests = options.maxRequests || 100;
+    this._workerCount = 0;
 
     this._logger.verbose('Authenticator set up');
   }
@@ -46,12 +47,32 @@ class Authenticator {
     return request(options)
       .then(response => {
         console.log(response);
-      }, () => {});
+        return password;
+      }, () => {
+        this._logger.verbose(password + ' failed');
+        return false;
+      });
   }
 
   _startWorker() {
-    this.makeSingleRequest(this.popPassword())
-      .then(() => this._startWorker());
+    if (this._passwordManager.isEmpty()) {
+      this._logger.verbose('Tried to start a new worker, but the password manager is empty.');
+      return;
+    }
+
+    this._workerCount++;
+    let password = this.popPassword();
+    this.makeSingleRequest(password)
+      .then(matchingPassword => {
+        this._workerCount--;
+        if (matchingPassword) {
+          this._logger.log(`Success: password '${matchingPassword}' matches`);
+        }
+
+        if (this._workerCount < this._maxRequests) {
+          this._startWorker();
+        }
+      });
   }
 
   start() {
