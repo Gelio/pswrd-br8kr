@@ -41,10 +41,9 @@ class Authenticator {
     };
 
     return request(options)
-      .then(response => {
-        console.log(response);
-        return password;
-      }, () => {
+      .then(
+        () => password,
+        () => {
         this._logger.verbose(password + ' failed');
         return false;
       });
@@ -69,19 +68,19 @@ class Authenticator {
           this._logger.log(`Success: password '${matchingPassword}' matches`);
         }
 
-        if (this._workerCount < this._maxRequests) {
+        if (this._canStartWorker()) {
           this._startWorker();
         }
       });
   }
 
-  start() {
-    for (let i=0; i < this._maxRequests; i++) {
-      this._startWorker();
-    }
+  init() {
+    this._passwordManager.on('newPassword', () => {
+      if (this._canStartWorker()) {
+        this._startWorker();
+      }
+    });
   }
-
-
 }
 
 module.exports = Authenticator;
