@@ -18,6 +18,31 @@
     },
     {
       "type": "node",
+      "request": "launch",
+      "name": "Launch Program (more requests)",
+      "program": "${workspaceRoot}\\index.js",
+      "args": [
+        "-f",
+        "wordlist.txt",
+        "--max-requests",
+        "1000"
+      ],
+      "cwd": "${workspaceRoot}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch (solution)",
+      "program": "${workspaceRoot}\\index.js",
+      "args": [
+        "-v",
+        "-f",
+        "solution.txt"
+      ],
+      "cwd": "${workspaceRoot}"
+    },
+    {
+      "type": "node",
       "request": "attach",
       "name": "Attach to Process",
       "port": 5858
