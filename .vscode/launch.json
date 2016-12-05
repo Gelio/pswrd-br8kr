@@ -9,6 +9,11 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceRoot}\\index.js",
+      "args": [
+        "-v",
+        "-f",
+        "wordlist.txt"
+      ],
       "cwd": "${workspaceRoot}"
     },
     {
