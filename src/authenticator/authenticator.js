@@ -32,10 +32,6 @@ class Authenticator {
     return 'Basic ' + this.getAuthorizationHash(password);
   }
 
-  popPassword() {
-    return this._passwordManager.pop();
-  }
-
   makeSingleRequest(password) {
     let options = {
       uri: this._url,
@@ -54,14 +50,18 @@ class Authenticator {
       });
   }
 
+  _canStartWorker() {
+    return !this._passwordManager.isEmpty() && this._workerCount < this._maxRequests;
+  }
+
   _startWorker() {
-    if (this._passwordManager.isEmpty()) {
-      this._logger.verbose('Tried to start a new worker, but the password manager is empty.');
+    if (!this._canStartWorker()) {
+      this._logger.verbose('Cannot start a new worker.');
       return;
     }
 
     this._workerCount++;
-    let password = this.popPassword();
+    let password = this._passwordManager.pop();
     this.makeSingleRequest(password)
       .then(matchingPassword => {
         this._workerCount--;
