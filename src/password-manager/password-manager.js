@@ -1,19 +1,20 @@
 const fs = require('fs');
 const readline = require('readline');
+const EventEmitter = require('events');
 
 /**
  * Reads passwords from file line by line with a buffer.
  *
  * @class PasswordManager
  */
-class PasswordManager {
+class PasswordManager extends EventEmitter {
   constructor(logger, options) {
+    super();
     if (!options) {
       throw new Error('Missing options');
     } else if (!options.passwordFile) {
       throw new Error('Missing password file');
     }
-
 
     /** @type {number} */
     this._bufferSize = options.bufferSize || 100;
@@ -119,11 +120,12 @@ class PasswordManager {
     // readline.removeEventListener('resume', this._onReadlineResume);
   }
 
-  _onNewPassword(line) {
+  _onNewPassword(password) {
     this.linesRead++;
-    this._passwordList.push(this._passwordPrefix + line);
+    this._passwordList.push(this._passwordPrefix + password);
+    this.emit('newPassword', password);
 
-    this._logger.verbose(`Read password #${this.linesRead}: ${line}`);
+    this._logger.verbose(`Read password #${this.linesRead}: ${password}`);
 
     if (this._passwordList.length >= this._bufferSize && !this._passwordReadline.paused) {
       this._passwordReadline.pause();
