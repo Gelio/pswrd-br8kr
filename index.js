@@ -20,10 +20,12 @@ let pm = new PasswordManager(logger, {
   passwordPrefix: options['pass-prefix'],
   bufferSize: options['max-requests']
 });
-pm.fillBuffer();
 
 let authenticator = new Authenticator(pm, logger, {
   url: options.url,
   user: options.user,
   maxRequests: options['max-requests']
 });
+
+pm.fillBuffer()
+  .then(() => authenticator.start());
