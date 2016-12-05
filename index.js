@@ -27,5 +27,5 @@ let authenticator = new Authenticator(pm, logger, {
   maxRequests: options['max-requests']
 });
 
-pm.fillBuffer()
-  .then(() => authenticator.start());
+authenticator.init();
+pm.fillBuffer();
