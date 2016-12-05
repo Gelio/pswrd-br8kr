@@ -14,26 +14,30 @@ class Authenticator {
       throw new Error('Missing url');
     }
 
-    this.passwordManager = passwordManager;
-    this.logger = logger;
-    this.user = options.user;
-    this.url = options.url;
-    this.maxRequests = options.maxRequests || 100;
+    this._passwordManager = passwordManager;
+    this._logger = logger;
+    this._user = options._user;
+    this._url = options._url;
+    this._maxRequests = options.maxRequests || 100;
 
-    this.logger.verbose('Authenticator set up');
+    this._logger.verbose('Authenticator set up');
   }
 
   getAuthorizationHash(password) {
-    return new Buffer(this.user + ':' + password).toString('base64');
+    return new Buffer(this._user + ':' + password).toString('base64');
   }
 
   getAuthorizationHeader(password) {
     return 'Basic ' + this.getAuthorizationHash(password);
   }
 
+  popPassword() {
+    return this._passwordManager.pop();
+  }
+
   makeSingleRequest(password) {
     let options = {
-      uri: this.url,
+      uri: this._url,
       headers: {
         'Authorization': this.getAuthorizationHeader(password)
       }
@@ -42,7 +46,18 @@ class Authenticator {
     return request(options)
       .then(response => {
         console.log(response);
-      });
+      }, () => {});
+  }
+
+  _startWorker() {
+    this.makeSingleRequest(this.popPassword())
+      .then(() => this._startWorker());
+  }
+
+  start() {
+    for (let i=0; i < this._maxRequests; i++) {
+      this._startWorker();
+    }
   }
 
 
