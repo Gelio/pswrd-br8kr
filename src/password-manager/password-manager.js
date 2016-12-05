@@ -119,9 +119,6 @@ class PasswordManager {
   }
 
   _onNewPassword(line) {
-    if (this._passwordReadline.paused) {
-      return;
-    }
     this.linesRead++;
     this._passwordList.push(this._passwordPrefix + line);
 
