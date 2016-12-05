@@ -4,7 +4,7 @@ const DEFAULT_OPTIONS = {
   url: 'http://mini.pw.edu.pl/~brodka/PZ/zad_A/zadanie_a.zip',
   user: 's3-pz',
   maxRequests: 100,
-  passPrefix: '4YIbe15P'
+  passPrefix: '4YIbe1'
 };
 
 const OPTION_DEFINITIONS = [
